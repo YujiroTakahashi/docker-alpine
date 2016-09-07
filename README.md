@@ -4,6 +4,7 @@ Alpine リナックス
 リポジトリURL
 ------
 
+* [PHP7パッケージ](http://dl-cdn.alpinelinux.org/alpine/edge/testing/)
 * [PHP7パッケージ](http://nl.alpinelinux.org/alpine/edge/testing/)
 
 ---
