@@ -4,8 +4,9 @@ Alpine リナックス
 リポジトリURL
 ------
 
-* [PHP7パッケージ](http://dl-cdn.alpinelinux.org/alpine/edge/testing/)
-* [PHP7パッケージ](http://nl.alpinelinux.org/alpine/edge/testing/)
+* [PHP7パッケージ](https://pkgs.alpinelinux.org/packages)
+* [PHP7パッケージ:リポジトリ](http://dl-cdn.alpinelinux.org/alpine/edge/)
+* [PHP7パッケージ:リポジトリ](http://nl.alpinelinux.org/alpine/edge/)
 
 ---
 
@@ -87,4 +88,6 @@ memcached.serializer = "igbinary"
 
 ````
 ---
+
+* [ドキュメント](https://yujirotakahashi.github.io/docker-alpine/)
 

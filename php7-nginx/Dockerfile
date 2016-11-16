@@ -1,17 +1,17 @@
 FROM alpine:3.4
 
-# ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ»ã‚°ãƒ«ãƒ¼ãƒ—ã®è¿½åŠ 
+# ƒ†[ƒU[EƒOƒ‹[ƒv‚Ì’Ç‰Á
 RUN set -xe \
     && addgroup -g 1000 -S croco \
     && adduser -u 1000 -D -S -G croco croco \
 
-# æ¨™æº–Cãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
+# •W€Cƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒCƒ“ƒXƒg[ƒ‹
     && apk --update add \
            --virtual .build-deps \
         musl \
         musl-dev \
 
-# å„ç¨®ãƒ„ãƒ¼ãƒ«ãƒ»ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ç”¨ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
+# ŠeŽíƒc[ƒ‹EƒRƒ“ƒpƒCƒ‹—pƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒCƒ“ƒXƒg[ƒ‹
     && apk --update add \
            --repository http://dl-cdn.alpinelinux.org/alpine/edge/main/ \
            --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ \
@@ -38,14 +38,14 @@ RUN set -xe \
         unzip \
         zlib-dev \
 
-# æ’ä¹…çš„ãªãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
+# P‹v“I‚ÈƒpƒbƒP[ƒW‚ÌƒCƒ“ƒXƒg[ƒ‹
     && apk --update add --no-cache \
            --repository http://dl-cdn.alpinelinux.org/alpine/edge/main/ \
            --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ \
            --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
            --virtual .persistent-deps \
 
-# ã‚µãƒ¼ãƒ“ã‚¹ãƒ»ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
+# ƒT[ƒrƒXEƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒCƒ“ƒXƒg[ƒ‹
         libldap \
         libstdc++ \
         openssl \
@@ -53,7 +53,7 @@ RUN set -xe \
         supervisor \
         zlib \
 
-# PHPã¨å„moduleã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
+# PHP‚ÆŠemodule‚ÌƒCƒ“ƒXƒg[ƒ‹
         php7 \
         php7-bcmath \
         php7-bz2 \
@@ -81,7 +81,39 @@ RUN set -xe \
         php7-zip \
         php7-zlib \
 
-# amazon-elasticache-clusterã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
+# Install Nginx from source, see http://nginx.org/en/linux_packages.html#mainline
+    && curl -fSL "https://github.com/nginx/nginx/archive/release-1.11.5.tar.gz" -o "/tmp/nginx-1.11.5.tgz" \
+    && tar xzvf /tmp/nginx-1.11.5.tgz -C /tmp \
+    && git clone https://github.com/kvspb/nginx-auth-ldap.git /tmp/nginx-auth-ldap \
+    && cd /tmp/nginx-release-1.11.5 \
+    && ./auto/configure \
+        --prefix=/usr/share/nginx \
+        --sbin-path=/usr/sbin/nginx \
+        --error-log-path=/var/log/nginx/error.log \
+        --http-log-path=/var/log/nginx/access.log \
+        --pid-path=/var/run/nginx.pid \
+        --lock-path=/var/run/nginx.lock \
+        --user=croco \
+        --group=croco \
+        --with-http_auth_request_module \
+        --with-http_gunzip_module \
+        --with-http_gzip_static_module \
+        --with-http_random_index_module \
+        --with-http_realip_module \
+        --with-http_secure_link_module \
+        --with-http_slice_module \
+        --with-http_stub_status_module \
+        --with-http_sub_module \
+        --with-http_v2_module \
+        --with-file-aio \
+        --with-stream \
+        --add-module=/tmp/nginx-auth-ldap \
+    && make \
+    && make install \
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log \
+
+# amazon-elasticache-cluster‚ÌƒCƒ“ƒXƒg[ƒ‹
     && git clone git://github.com/Yujiro3/aws-elasticache-cluster-client-libmemcached /tmp/aws-elasticache-cluster-client-libmemcached \
     && mkdir /tmp/aws-elasticache-cluster-client-libmemcached/BUILD \
     && cd /tmp/aws-elasticache-cluster-client-libmemcached/BUILD \
@@ -89,7 +121,7 @@ RUN set -xe \
     && make \
     && make install \
 
-# phalconã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
+# phalcon‚ÌƒCƒ“ƒXƒg[ƒ‹
     && git clone -b 3.0.x git://github.com/phalcon/cphalcon.git /tmp/cphalcon \
     && cd /tmp/cphalcon/build/php7/64bits \
     && phpize7 \
@@ -98,7 +130,7 @@ RUN set -xe \
     && make install \
     && echo "extension=phalcon.so" > /etc/php7/conf.d/60_phalcon.ini \
 
-# igbinaryã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
+# igbinary‚ÌƒCƒ“ƒXƒg[ƒ‹
     && curl -fSL "https://github.com/igbinary/igbinary/archive/php7-dev-playground2.zip" -o "/tmp/igbinary.zip" \
     && unzip -q /tmp/igbinary.zip -d /tmp \
     && cd /tmp/igbinary-php7-dev-playground2 \
@@ -108,7 +140,7 @@ RUN set -xe \
     && make install \
     && echo "extension=igbinary.so" > /etc/php7/conf.d/00_igbinary.ini \
 
-# aws-elasticache-cluster-client-memcached-for-phpã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
+# aws-elasticache-cluster-client-memcached-for-php‚ÌƒCƒ“ƒXƒg[ƒ‹
     && git clone -b php7 git://github.com/awslabs/aws-elasticache-cluster-client-memcached-for-php.git /tmp/aws-elasticache-cluster-client-memcached-for-php \
     && cd /tmp/aws-elasticache-cluster-client-memcached-for-php \
     && phpize7 \
@@ -120,17 +152,18 @@ RUN set -xe \
     && echo "extension=memcached.so" > /etc/php7/conf.d/30_memcached.ini \
 
 
-# ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã«ä½¿ã£ãŸãƒ•ã‚¡ã‚¤ãƒ«ã®å‰Šé™¤
+# ƒRƒ“ƒpƒCƒ‹‚ÉŽg‚Á‚½ƒtƒ@ƒCƒ‹‚Ìíœ
     && rm -rf /tmp/* \
     && apk del .build-deps \
 
-# ã‚¢ã‚¯ã‚»ã‚¹æ¨©é™ã®å¤‰æ›´
-    && chown -R croco:croco /var/log/php7 \
+# ƒAƒNƒZƒXŒ ŒÀ‚Ì•ÏX
+    && chown -R croco /var/log/php7 \
+    && chgrp -R croco /var/lib/php7 \
     && mkdir -p /var/run/php-fpm7 \
     && chown -R croco:croco /var/run/php-fpm7
 
-# ãƒ•ã‚¡ã‚¤ãƒ«ã®è¿½åŠ 
+# ƒtƒ@ƒCƒ‹‚Ì’Ç‰Á
 ADD opt /opt
 
-EXPOSE 9000
-CMD ["php-fpm7", "--fpm-config", "/opt/conf/php-fpm.conf", "--nodaemonize"]
+EXPOSE 80
+CMD ["supervisord", "-c", "/opt/conf/supervisord.conf"]
