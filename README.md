@@ -4,9 +4,9 @@ Alpine リナックス
 リポジトリURL
 ------
 
-* [PHP7パッケージ](https://pkgs.alpinelinux.org/packages)
-* [PHP7パッケージ:リポジトリ](http://dl-cdn.alpinelinux.org/alpine/edge/)
-* [PHP7パッケージ:リポジトリ](http://nl.alpinelinux.org/alpine/edge/)
+* [パッケージ検索](https://pkgs.alpinelinux.org/packages)
+* [エッジ:リポジトリ](http://dl-cdn.alpinelinux.org/alpine/edge/)
+* [エッジ:リポジトリ](http://nl.alpinelinux.org/alpine/edge/)
 
 ---
 
