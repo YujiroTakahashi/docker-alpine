@@ -1,0 +1,46 @@
+# Contributor: yujiro <yujiro@cro-co.co.jp>
+# Maintainer:
+pkgname=php7-phalcon
+pkgver=3.0
+pkgrel=0
+pkgdesc="Web framework delivered as a C-extension for PHP"
+url="http://phalconphp.com"
+arch="all"
+license="Phalcon is open source software licensed under the New BSD License. See the docs/LICENSE.txt file for more"
+depends=""
+makedepends=""
+install=""
+subpackages=""
+source=""
+builddir="$srcdir/build/php7/64bits/"
+
+build() {
+	git clone -b 3.0.x git://github.com/phalcon/cphalcon.git ./src
+	cd "$builddir"
+	phpize7
+	./configure \
+		CC="gcc" \
+		CFLAGS="-march=native -mtune=native -O2 -fomit-frame-pointer -fvisibility=hidden" \
+		CPPFLAGS="-DPHALCON_RELEASE" \
+		--with-php-config=/usr/bin/php-config7 \
+		--enable-phalcon \
+		|| return 1
+
+	make || return 1
+}
+
+package() {
+	cd "$builddir"
+	make DESTDIR="$pkgdir" install || return 1
+	if [ -d "$pkgdir"/usr/local ]; then
+		local f=$(cd "$pkgdir" ; find usr/local -type f)
+		if [ -n "$f" ]; then
+			error "Found files in /usr/local:"
+			echo "$f"
+			return 1
+		fi
+	fi
+	install -Dm644 COPYING \
+		"${pkgdir}/usr/share/licenses/${pkgname}"/COPYING || return 1
+}
+

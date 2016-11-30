@@ -1,18 +1,19 @@
 FROM alpine:3.4
 
 RUN set -xe \
-# •W€Cƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒCƒ“ƒXƒg[ƒ‹
+# æ¨™æº–Cãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
     && apk --update add \
            --virtual .build-deps \
         musl \
         musl-dev \
 
-# ŠeŽíƒc[ƒ‹EƒRƒ“ƒpƒCƒ‹—pƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒCƒ“ƒXƒg[ƒ‹
+# å„ç¨®ãƒ„ãƒ¼ãƒ«ãƒ»ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ç”¨ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
     && apk --update add \
            --repository http://dl-cdn.alpinelinux.org/alpine/edge/main/ \
            --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ \
            --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
            --virtual .build-deps \
+        alpine-sdk \
         autoconf \
         cyrus-sasl-dev \
         curl \
@@ -34,17 +35,32 @@ RUN set -xe \
         unzip \
         zlib-dev \
 
-# P‹v“I‚ÈƒpƒbƒP[ƒW‚ÌƒCƒ“ƒXƒg[ƒ‹
+# æ’ä¹…çš„ãªãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
     && apk --update add --no-cache \
            --repository http://dl-cdn.alpinelinux.org/alpine/edge/main/ \
            --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ \
            --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
            --virtual .persistent-deps \
 
-# ƒT[ƒrƒXEƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒCƒ“ƒXƒg[ƒ‹
+# ã‚µãƒ¼ãƒ“ã‚¹ãƒ»ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
         libldap \
         libstdc++ \
         openssl \
         pcre \
         supervisor \
-        zlib 
+        zlib \
+
+# abuild checksum && abuild -r
+    && adduser -D yujiro \
+    && addgroup yujiro abuild \
+    && chown -R yujiro /usr/lib/php7 \
+    && chown -R yujiro /usr/include/php7 \
+    && echo "yujiro  ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers \
+    && mkdir -p /var/cache/distfiles \
+    && chgrp abuild /var/cache/distfiles \
+    && chmod g+w /var/cache/distfiles \
+    && echo "PACKAGER='yujiro <$useremail>'" >> /etc/abuild.conf \
+    && su yujiro \
+    && cd /home/yujiro \
+    && git config --global user.name 'yujiro' \
+    && git config --global user.email 'yujiro@cro-co.co.jp' 
